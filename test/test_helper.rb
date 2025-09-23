@@ -14,7 +14,7 @@ ActiveRecord::Base.establish_connection(
 
 # Create a dummy table for our test models
 ActiveRecord::Schema.define do
-  create_table :test_table do |t|
+  create_table :campgrounds do |t|
     t.string :name
     t.timestamps
   end
