@@ -10,6 +10,10 @@ module Bivy
     included do
       # When this concern is included in a class, add it to the tracked models
       Indexable.add_model(self)
+
+      # Add callbacks for indexing operations using callback classes
+      after_save_commit Bivy::Callbacks::AfterSaveCommit
+      after_destroy_commit Bivy::Callbacks::AfterDestroyCommit
     end
 
     class << self
