@@ -3,9 +3,10 @@
 module Bivy
   module Callbacks
     class AfterDestroyCommit
-      def self.after_commit(model)
-        # Default implementation - override in subclasses or configure per model
-        # This is where indexing logic for destroys would go
+      class << self
+        def after_commit(record)
+          Bivy::Jobs::RecordJob.perform_later(record, :bivy_destroy)
+        end
       end
     end
   end

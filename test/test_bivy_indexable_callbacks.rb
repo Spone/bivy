@@ -113,4 +113,49 @@ class TestBivyIndexableCallbacks < Minitest::Test
     assert callbacks.any? { |cb| cb.filter == Bivy::Callbacks::AfterDestroyCommit },
       "Should have AfterDestroyCommit callback registered"
   end
+
+  def test_after_save_commit_enqueues_record_job
+    # Verify that the callback calls RecordJob.perform_later
+    model_class = create_test_model("AlpineStove") do
+      include Bivy::Indexable
+    end
+
+    instance = model_class.new(name: "Test Stove")
+
+    # Mock the job to verify it gets called
+    job_mock = Minitest::Mock.new
+    job_mock.expect :call, nil, [instance, :bivy_save]
+
+    Bivy::Jobs::RecordJob.stub :perform_later, job_mock do
+      instance.save!
+    end
+
+    job_mock.verify
+  end
+
+  def test_after_destroy_commit_enqueues_record_job
+    fake_index = Class.new
+
+    # Verify that the callback calls RecordJob.perform_later
+    model_class = create_test_model("WalkingStick") do
+      include Bivy::Indexable
+
+      bivy_index_in fake_index
+    end
+
+    instance = model_class.new(name: "Test Walking Stick")
+
+    # Mock the job to verify it gets called for both save and destroy
+    job_calls = []
+    job_mock = ->(record, action) { job_calls << action }
+
+    Bivy::Jobs::RecordJob.stub :perform_later, job_mock do
+      instance.save!
+      instance.destroy!
+    end
+
+    assert_equal 2, job_calls.size, "Should call RecordJob.perform_later twice (save and destroy)"
+    assert_equal :bivy_save, job_calls[0], "First call should be for save"
+    assert_equal :bivy_destroy, job_calls[1], "Second call should be for destroy"
+  end
 end

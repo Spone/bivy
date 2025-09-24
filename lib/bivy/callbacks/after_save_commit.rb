@@ -3,9 +3,10 @@
 module Bivy
   module Callbacks
     class AfterSaveCommit
-      def self.after_commit(model)
-        # Default implementation - override in subclasses or configure per model
-        # This is where indexing logic for saves would go
+      class << self
+        def after_commit(record)
+          Bivy::Jobs::RecordJob.perform_later(record, :bivy_save)
+        end
       end
     end
   end
