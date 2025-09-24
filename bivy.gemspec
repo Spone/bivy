@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
   spec.authors = ["Hans Lemuet"]
   spec.email = ["hans@etamin.studio"]
 
-  spec.summary = "Quick-pitch Ruby indexing that adapts to any search terrain. Set up camp on Algolia (and more) with lightweight setup."
+  spec.summary = "Quick-pitch Rails content indexing that adapts to any search terrain. Set up camp on Algolia (and more) with lightweight setup."
   spec.description = "Bivy simplifies ActiveRecord content indexing across multiple search engines. It provides a unified interface for Algolia, Typesense, and other providers, letting you switch or support multiple engines without rewriting indexing code."
   spec.homepage = "https://github.com/Spone/bivy"
   spec.license = "MIT"
